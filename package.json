@@ -1,0 +1,74 @@
+{
+  "name": "new-umi-electron",
+  "version": "1.0.0",
+  "main": "output/main/index.js",
+  "license": "MIT",
+  "author": {
+    "name": "deuscx"
+  },
+  "scripts": {
+    "dev:main": "webpack --config ./scripts/webpack.config.main.js --watch",
+    "dev:preload": "webpack --config ./scripts/webpack.config.preload.js --watch",
+    "dev:render": "concurrently \"clean:render\" \"cross-env APP_ROOT=render umi dev\"  \"wait-on http://localhost:8000 && electron .\" ",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run dev:main\" \"npm run dev:preload\" \"npm run dev:render\"",
+    "build:main": "cross-env NODE_ENV=production webpack --config ./scripts/webpack.config.main.js",
+    "build:preload": "cross-env NODE_ENV=production webpack --config ./scripts/webpack.config.preload.js",
+    "build:renderer": "rm -rf render/src/.umi* && cross-env APP_ROOT=render umi build",
+    "build": "cross-env NODE_ENV=production concurrently \"npm run build:main\" \"npm run build:preload\" \"npm run build:renderer\"",
+    "pack-mac": "electron-builder build --mac",
+    "pack-win": "electron-builder build --win",
+    "pack-all": "electron-builder build -mw",
+    "clean:build": "rm -rf release",
+    "clean:render": "rm -rf render/src/.umi*",
+    "prettier": "prettier --write **/*.{js,jsx,tsx,ts,less,md,json}",
+    "lint": "eslint app/ render/ --color --ext .js,.ts,.tsx",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage"
+  },
+  "devDependencies": {
+    "@types/electron-devtools-installer": "^2.2.0",
+    "@types/fs-extra": "^9.0.5",
+    "@types/lowdb": "^1.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/parser": "^4.9.1",
+    "awesome-typescript-loader": "^5.2.1",
+    "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
+    "electron": "^11.0.4",
+    "electron-builder": "^22.9.1",
+    "electron-devtools-installer": "^3.1.1",
+    "eslint": "^7.15.0",
+    "eslint-plugin-react": "^7.21.5",
+    "typescript": "^4.1.2",
+    "wait-on": "^5.2.0",
+    "webpack": "^5.10.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-merge": "^5.5.0"
+  },
+  "dependencies": {
+    "@ant-design/pro-layout": "^5.0.12",
+    "@umijs/preset-react": "1.x",
+    "@umijs/test": "^3.3.1",
+    "axios": "^0.21.0",
+    "fs-extra": "^9.0.1",
+    "lint-staged": "^10.0.7",
+    "lowdb": "^1.0.0",
+    "prettier": "^1.19.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "umi": "^3.3.1",
+    "yorkie": "^2.0.0"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write",
+      "npm run lint"
+    ]
+  }
+}

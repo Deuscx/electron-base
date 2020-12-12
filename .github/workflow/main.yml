@@ -1,0 +1,37 @@
+name: publish release
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*.*.*'
+
+# Workflow's jobs
+jobs:
+  # job's id
+  release:
+    runs-on: ubuntu-18.04
+    # job's name
+    name: build and release electron app
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+            yarn install
+            yarn pack-all
+      # cleanup artifacts in release
+      - name: cleanup artifacts
+        run: |
+          rm -rf "release/!(*.exe|*.dmg)"
+       # upload artifacts
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: release
+      # create release
+      - name: release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "release/**"
+        env:
+          GITHUB_TOKEN: ${{ secrets.UMI_TOKEN }}

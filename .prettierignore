@@ -1,0 +1,13 @@
+**/*.md
+**/*.svg
+**/*.ejs
+**/*.html
+package.json
+.umi
+.umi-production
+.umi-test
+output
+scripts
+tsconfig.json
+release
+package-lock.json
